@@ -89,17 +89,11 @@ class TestNatsSimulation(unittest.TestCase):
     
     def test_gate_to_gate(self):
         simulation = nats_gate_to_gate.GateToGate()
-        df = simulation()
+        df = simulation()['trajectory']
 
         # Basic consistency checks:
         self.assertEqual(len(df), 369)
 
-    # Note from McFarland: testing on Ubuntu using NATS 1.8, this test
-    # often hangs after the message "Flight propagation completed",
-    # with CPU still being utilized but no further progress.  The hang
-    # occurs sometimes but other times the test completes.  More
-    # detail in GitHub Issue #5.
-    @unittest.skip("unresolved simulation hang, see GitHub Issue #5")
     def test_vcas(self):
         cur_dir = os.path.dirname(os.path.abspath(__file__))
         data_dir = os.path.join(cur_dir, '..', 'sample_data/')
@@ -110,7 +104,7 @@ class TestNatsSimulation(unittest.TestCase):
                'sim_time': 1000}  # total simulation time
 
         sim = VCAS(cfg)
-        track = sim()
+        track = sim()['trajectory']
         self.assertEqual(len(track), 1000)
 
 @unittest.skipIf(not USE_GNATS, "use NATS instead of GNATS")
@@ -127,7 +121,7 @@ class TestGnatsSimulation(unittest.TestCase):
 
     def test_gate_to_gate(self):
         simulation = gnats_gate_to_gate.GateToGate()
-        df = simulation()
+        df = simulation()['trajectory']
 
         # Basic consistency checks:
         self.assertEqual(len(df), 218)
